@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decentralized Polling App - Akash Network</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗳️ Decentralized Polling</h1>
+            <p>Powered by Akash Network</p>
+        </header>
+
+        <main>
+            <!-- Create Poll Section -->
+            <section class="create-poll">
+                <h2>Create New Poll</h2>
+                <form id="pollForm">
+                    <div class="form-group">
+                        <label for="pollTitle">Poll Question:</label>
+                        <input type="text" id="pollTitle" placeholder="What's your favorite programming language?" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Poll Options:</label>
+                        <div id="options">
+                            <input type="text" class="option-input" placeholder="Option 1" required>
+                            <input type="text" class="option-input" placeholder="Option 2" required>
+                        </div>
+                        <button type="button" id="addOption">Add Option</button>
+                    </div>
+                    
+                    <button type="submit">Create Poll</button>
+                </form>
+            </section>
+
+            <!-- Active Polls Section -->
+            <section class="polls-list">
+                <h2>Active Polls</h2>
+                <div id="pollsContainer">
+                    <div class="loading">Loading polls...</div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Built for Akash x Hackodisha Hackathon 2024</p>
+            <p>Deployed on decentralized infrastructure</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

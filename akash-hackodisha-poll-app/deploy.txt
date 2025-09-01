@@ -1,0 +1,83 @@
+---
+version: "2.0"
+
+services:
+  # 1. The Frontend Web App (Publicly Visible)
+  frontend:
+    image: nginx:1.25 # A standard web server to host the user interface
+    expose:
+      - port: 80
+        as: 80
+        to:
+          - global: true # Expose this to the whole internet
+
+  # 2. The Backend API Server (Private)
+  backend:
+    image: node:18-alpine # A lightweight Node.js server
+    depends_on: # Specifies that the database should be ready first
+      - db
+    env:
+      # This variable tells the backend how to connect to the database.
+      - MONGO_URI=mongodb://db:27017/hackodisha-poll
+    expose:
+      - port: 3000
+        to:
+          # IMPORTANT: Only allows the 'frontend' service to talk to it. Not public.
+          - service: frontend
+
+  # 3. The Database (Private)
+  db:
+    image: mongo:6.0 # A standard MongoDB database
+    expose:
+      - port: 27017
+        to:
+          # IMPORTANT: Only allows the 'backend' service to talk to it. Not public.
+          - service: backend
+    params:
+      storage:
+        data:
+          mount: /data/db # Mounts a persistent disk to the database container
+
+profiles:
+  compute:
+    frontend:
+      resources:
+        cpu: { units: 0.1 }
+        memory: { size: 128Mi }
+        storage: [{ size: 128Mi }]
+    backend:
+      resources:
+        cpu: { units: 0.2 }
+        memory: { size: 256Mi }
+        storage: [{ size: 256Mi }]
+    db:
+      resources:
+        cpu: { units: 0.2 }
+        memory: { size: 256Mi }
+        storage:
+          - name: data # Defines the persistent storage volume
+            size: 1Gi
+            attributes:
+              persistent: true
+              class: beta2
+
+  placement:
+    dcloud:
+      pricing:
+        frontend: { denom: uakt, amount: 100 }
+        backend: { denom: uakt, amount: 120 }
+        db: { denom: uakt, amount: 150 }
+
+deployment:
+  frontend:
+    dcloud:
+      profile: frontend
+      count: 1
+  backend:
+    dcloud:
+      profile: backend
+      count: 1
+  db:
+    dcloud:
+      profile: db
+      count: 1
